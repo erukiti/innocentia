@@ -1,6 +1,6 @@
 {
   "main": "lib/index.js",
-  "name": "demiurge",
+  "name": "innocentia",
   "version": "0.0.1",
   "description": "",
   "author": {
@@ -16,7 +16,9 @@
     "watch": "ws watch",
     "test": "ws test"
   },
-  "bin": {},
+  "bin": {
+    "innocentia": "./bin/innocentia"
+  },
   "devDependencies": {
     "ava": "^0.19.1",
     "babel-core": "^6.24.1",
@@ -24,10 +26,19 @@
     "babel-loader": "^7.0.0",
     "babel-preset-es2016": "^6.24.1",
     "babel-preset-power-assert": "^1.0.0",
+    "babelify": "^7.3.0",
+    "browserify": "^14.4.0",
+    "es2016": "^0.0.0",
     "eslint": "^3.19.0",
     "espower-babel": "^4.0.3",
     "power-assert": "^1.4.3",
     "waterslide": "^0.8.7",
     "webpack": "^2.6.1"
+  },
+  "dependencies": {
+    "babelify": "^7.3.0",
+    "browserify": "^14.4.0",
+    "es2016": "0.0.0",
+    "express": "^4.15.3"
   }
 }

@@ -1,10 +1,7 @@
-# demiurge
+# Innocentia
 
-## directories
+## how to use
 
-| directory | description |
-| --------- | ----------- |
-| src | source code directory |
-| lib | build directory |
-
-
+```sh
+$ bin/innocentia [source file directory]
+```
