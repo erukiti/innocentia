@@ -39,6 +39,7 @@
     "babelify": "^7.3.0",
     "browserify": "^14.4.0",
     "es2016": "0.0.0",
-    "express": "^4.15.3"
+    "express": "^4.15.3",
+    "watchify": "^3.9.0"
   }
 }
