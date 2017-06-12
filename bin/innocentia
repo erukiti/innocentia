@@ -11,6 +11,8 @@ const sourcePath = path.resolve(process.argv.length <= 2 ? './' : process.argv[2
 console.log(`path: ${sourcePath}`)
 
 app.use(serve(sourcePath))
+app.use(express.static(sourcePath))
+
 
 app.listen(3000, () => {
     console.log('http://localhost:3000/')
