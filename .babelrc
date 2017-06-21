@@ -1,7 +1,0 @@
-{
-  "presets": [
-    "es2016",
-    "babel-preset-power-assert"
-  ],
-  "plugins": []
-}
