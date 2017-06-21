@@ -31,13 +31,24 @@ const compileJS = (filePath, ev = null) => {
             return filePath
         }
 
-        const b = browserify(decideSource(), {
+        const isTypeScript = filename => /\.tsx?$/.test(filename)
+
+        const source = decideSource()
+
+        const b = browserify(source, {
             debug: true,
             plugin: [watchify],
             extensions: ['.js', '.jsx', 'ts', 'tsx']
         })
-        b.plugin('tsify')
-        b.transform('babelify')
+
+        if (isTypeScript(source)) {
+            b.plugin('tsify')
+        }
+
+        b.transform('babelify', {
+            presets: ['es2016', 'react'],
+            plugins: ['transform-react-jsx']
+        })
         b.bundle((err, buf) => {
             if (err) {
                 reject(err)

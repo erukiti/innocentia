@@ -1,7 +1,10 @@
 {
   "presets": [
     "es2016",
-    "babel-preset-power-assert"
+    "react",
+    "power-assert"
   ],
-  "plugins": []
+  "plugins": [
+    "transform-react-jsx"
+  ]
 }
