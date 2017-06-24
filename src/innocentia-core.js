@@ -27,7 +27,6 @@ class InnocentiaCore {
             console.error(err)
         }
 
-
         return (req, res, next) => {
             if (req.url.substr(-3) !== '.js') {
                 return next()
@@ -42,21 +41,28 @@ class InnocentiaCore {
                 return
             }
 
-            let count = 0
-
             const ev = new EventEmitter()
             ev.on('error', err => {
                 ev2 && ev2.emit('error', err)
-                res.type('js').send(`console.log(${JSON.stringify(err, null, '  ')})`)
             })
             ev.on('compiled', result => {
-                cache[result.target] = result.buf
-                ev2 && ev2.emit('compiled', result.target)
+                if (cache[result.dest]) {
+                    console.error('already sent: ', result.dest)
+                    return
+                }
+                cache[result.dest] = result.buf
+                ev2 && ev2.emit('compiled', result.dest)
                 res.type('js').send(result.buf)
             })
             ev.on('updated', result => {
-                cache[result.target] = result.buf
-                ev2 && ev2.emit('updated', result.target)
+                if (cache[result.dest]) {
+                    cache[result.dest] = result.buf
+                    ev2 && ev2.emit('updated', result.dest)
+                } else {
+                    cache[result.dest] = result.buf
+                    ev2 && ev2.emit('compiled', result.dest)
+                    res.type('js').send(result.buf)
+                }
             })
 
             ev2 && ev2.emit('start', dest)

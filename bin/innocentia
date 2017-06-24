@@ -2,6 +2,7 @@
 
 const path = require('path')
 const express = require('express')
+const {EventEmitter} = require('events')
 
 const createCore = require('../src')
 
@@ -10,8 +11,15 @@ const sourcePath = path.resolve(process.argv.length <= 2 ? './' : process.argv[2
 
 console.log(`path: ${sourcePath}`)
 
+const ev = new EventEmitter()
+ev.on('error', err => console.error('ev2 error: ', err))
+ev.on('compiled', filename => console.log('ev2 compiled: ', filename))
+ev.on('updated', filename => console.log('ev2 updated: ', filename))
+ev.on('start', filename => console.log('ev2 start: ', filename))
+
+
 const core = createCore()
-app.use(core.serve(sourcePath))
+app.use(core.serve({sourcePath, ev}))
 app.use(express.static(sourcePath))
 
 

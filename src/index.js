@@ -26,6 +26,7 @@ const defaultDecideSource = filePath => {
 }
 
 const defaultBuildSource = (src, dest, ev) => {
+    console.log(src)
     const isTypeScript = filename => /\.tsx?$/.test(filename)
 
     const b = browserify(src, {
@@ -34,14 +35,11 @@ const defaultBuildSource = (src, dest, ev) => {
         extensions: ['.js', '.jsx', 'ts', 'tsx']
     })
 
-    if (isTypeScript(src)) {
+    // Fixme: tsifyがインストールされていればに変更する
+    // if (isTypeScript(src)) {
         b.plugin('tsify')
-    }
-
-    b.transform('babelify', {
-        presets: ['es2016', 'react'],
-        plugins: ['transform-react-jsx']
-    })
+    // }
+    b.transform('babelify')
     b.bundle((err, buf) => {
         if (err) {
             ev.emit('error', err.toString())

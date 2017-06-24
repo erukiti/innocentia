@@ -24,6 +24,11 @@
     "eslint": "^3.19.0"
   },
   "dependencies": {
-    "express": "^4.15.3"
+    "babelify": "^7.3.0",
+    "browserify": "^14.4.0",
+    "express": "^4.15.3",
+    "tsify": "^3.0.1",
+    "typescript": "^2.3.4",
+    "watchify": "^3.9.0"
   }
 }
