@@ -18,7 +18,7 @@ class InnocentiaCore {
         try {
             const filename = path.join(projectPath || sourcePath, 'package.json')
             packageObj = JSON.parse(fs.readFileSync(filename).toString())
-            console.log(packageObj)
+            // logger.info(packageObj)
 
             const installed = fs.readdirSync(path.join(projectPath || sourcePath, 'node_modules'))
 

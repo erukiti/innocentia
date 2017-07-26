@@ -1,10 +1,11 @@
 const fs = require('fs')
+const path = require('path')
+const logger = require('logger').getLogger('innocentia')
 
 const InnocentiaCore = require('./innocentia-core')
 const Utils = require('./utils')
 
-const browserify = Utils.requireLocal('browserify')
-const watchify = Utils.requireLocal('watchify')
+
 
 const defaultDecideSource = filePath => {
     const isExists = filename => {
@@ -25,21 +26,43 @@ const defaultDecideSource = filePath => {
     return filePath
 }
 
-const defaultBuildSource = (src, dest, ev) => {
-    console.log(src)
-    const isTypeScript = filename => /\.tsx?$/.test(filename)
+// const defaultBuildSource = (src, dest, ev) => {
+//     const rollup = Utils.requireLocal('rollup')
+//     const conf = require(path.resolve(path.join('./', 'rollup.config.js')))
+//     conf['entry'] = src
 
+//     rollup.rollup(conf).then(b => {
+//         const res = b.generate({format: 'cjs', moduleName: 'test'})
+//         ev.emit('compiled', {dest, buf: res.code})
+//     }).catch(e => {
+//         ev.emit('error', e)
+//     })
+// }
+
+const browserify = Utils.requireLocal('browserify')
+const watchify = Utils.requireLocal('watchify')
+const defaultBuildSource = (src, dest, ev) => {
     const b = browserify(src, {
         debug: true,
         plugin: [watchify],
+        ignoreMissing: true,
         extensions: ['.js', '.jsx', 'ts', 'tsx']
     })
-
-    // Fixme: tsifyがインストールされていればに変更する
-    // if (isTypeScript(src)) {
+    if (Utils.checkLocalModule('tsify')) {
         b.plugin('tsify')
-    // }
-    b.transform('babelify')
+        logger.log('Use tsify')
+    }
+    if (Utils.checkLocalModule('babelify')) {
+        try {
+            const babelrc = JSON.parse(fs.readFileSync('.babelrc'))
+            logger.log(babelrc)
+            b.transform('babelify', babelrc)
+            logger.log('Use babelify')
+        } catch (e) {
+            logger.error('.babelrc not found')
+        }
+    }
+
     b.bundle((err, buf) => {
         if (err) {
             ev.emit('error', err.toString())
@@ -57,6 +80,7 @@ const defaultBuildSource = (src, dest, ev) => {
         })
     })
 }
+
 
 module.exports = (decideSource = defaultDecideSource, buildSource = defaultBuildSource) => {
     return new InnocentiaCore(decideSource, buildSource)
