@@ -1,5 +1,7 @@
 const path = require('path')
 const fs = require('fs')
+const {getLogger} = require('logger')
+const logger = getLogger('innocentia')
 
 const getPluginPath = (pluginName, basepath = './') => {
     return path.resolve(path.join(basepath, 'node_modules', pluginName))
@@ -8,7 +10,7 @@ const getPluginPath = (pluginName, basepath = './') => {
 class Utils {
     static requireLocal(pluginName, basepath = './') {
         const pluginPath = getPluginPath(pluginName, basepath)
-        console.log('require', pluginPath)
+        logger.log('require', pluginPath)
         return require(pluginPath)
     }
 

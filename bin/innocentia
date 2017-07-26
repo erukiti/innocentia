@@ -4,19 +4,20 @@ const path = require('path')
 const express = require('express')
 const {EventEmitter} = require('events')
 
-const createCore = require('../src')
+const InnocentiaCore = require('../src')
 
 const app = express()
 const sourcePath = path.resolve(process.argv.length <= 2 ? './' : process.argv[2])
+const core = new InnocentiaCore({sourcePath})
 
-const ev = new EventEmitter()
-ev.on('error', err => console.error('ev2 error: ', err))
-ev.on('compiled', filename => console.log('ev2 compiled: ', filename))
-ev.on('updated', filename => console.log('ev2 updated: ', filename))
-ev.on('start', filename => console.log('ev2 start: ', filename))
+core.on('error', err => console.error('ev2 error: ', err))
+core.on('compiled', filename => console.log('ev2 compiled: ', filename))
+core.on('updated', filename => console.log('ev2 updated: ', filename))
+core.on('start', filename => console.log('ev2 start: ', filename))
+core.on('accessed', filename => console.log(filename))
+core.on('warning', msg => console.warn(msg))
 
-const core = createCore()
-app.use(core.serve({sourcePath, ev}))
+app.use(core.serve())
 app.use(express.static(sourcePath))
 
 app.listen(3000, () => {
