@@ -1,7 +1,7 @@
 const {EventEmitter} = require('events')
 const fs = require('fs')
 const path = require('path')
-
+const mkdirp = require('mkdirp')
 const utils = require('../utils')
 
 class BrowserifyBuild {
@@ -41,39 +41,39 @@ class BrowserifyBuild {
         return b
     }
 
-    build(src) {
-        return new Promise((resolve, reject) => {
-            const b = this._setupBrowserify(src)
-
-            b.bundle((err, buf) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve({src, buf})
-                }
-            })
-        })
-    }
-
-    watch(src) {
-        const b = this._setupBrowserify(src)
-
+    _bundle(b, src, dest, label) {
         b.bundle((err, buf) => {
             if (err) {
                 this.ev.emit('error', err.toString())
-            } else {
-                this.ev.emit('compiled', {src, buf})
+                return
+            }
+            this.ev.emit(label, {src, buf})
+            if (dest) {
+                mkdirp.sync(path.dirname(path.resolve(dest)))
+                fs.writeFileSync(path.resolve(dest), buf)
             }
         })
-        b.on('update', () => {
-            b.bundle((err, buf) => {
-                if (err) {
-                    this.ev.emit('error', err.toString())
-                } else {
-                    this.ev.emit('upated', {src, buf})
-                }
-            })
+
+    }
+
+    _build(entries, isWatch) {
+        entries.forEach(({src, dest}) => {
+            const b = this._setupBrowserify(src)
+            this._bundle(b, src, dest, 'compiled')
+            if (isWatch) {
+                b.on('update', () => {
+                    this._bundle(b, src, dest, 'updated')
+                })
+            }
         })
+    }
+
+    build(entries) {
+        this._build(entries, false)
+    }
+
+    watch(entries) {
+        this._build(entries, true)
     }
 
     on(name, handler) {

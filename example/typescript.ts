@@ -1,5 +1,5 @@
 export default class Hoge {
-    hp: number = 20
+    hp: number = 70
 
     takeDamage(point) {
         this.hp -= point

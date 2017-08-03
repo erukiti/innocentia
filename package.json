@@ -31,6 +31,8 @@
     "watchify": "^3.9.0"
   },
   "dependencies": {
-    "express": "^4.15.3"
+    "express": "^4.15.3",
+    "lignum": "file:///Users/erukiti/work/lignum",
+    "mkdirp": "^0.5.1"
   }
 }

@@ -2,40 +2,30 @@ const path = require('path')
 const express = require('express')
 const {EventEmitter} = require('events')
 const fs = require('fs')
+const mkdirp = require('mkdirp')
+const {getLogger} = require('lignum')
+const logger = getLogger('innocentia')
 
-const createBuilder = require('./builder')
+const Builder = require('./builder')
 
 class InnocentiaCore {
-    constructor(opts) {
+    constructor(opts = {}) {
         this.requests = {}
         this.ev = new EventEmitter()
-        this.sourcePath = opts.sourcePath
-        this.builder = createBuilder(opts)
+        this.sourcePath = opts.sourcePath || './'
+        this.builder = new Builder(opts)
+        this.builder.on('error', err => {
+            this.ev.emit('error', err)
+        })
     }
 
     on(name, handler) {
         this.ev.on(name, handler)
     }
-
-    _init() {
-/*
-        let packageObj = {}
-        try {
-            const filename = path.resolve(path.join(this.sourcePath, 'package.json'))
-            packageObj = JSON.parse(fs.readFileSync(filename).toString())
-            // logger.info(packageObj)
-
-            const installed = fs.readdirSync(path.join(projectPath || sourcePath, 'node_modules'))
-
-
-        } catch (err) {
-            console.error(err)
-        }
-*/
-
-        this.builder.on('error', err => {
-            this.ev.emit('error', err)
-        })
+    build(entries) {
+        this.builder.on('compiled', ({src}) => this.ev.emit('compiled', src))
+        this.builder.on('info', info => this.ev.emit('info', info))
+        this.builder.build(entries)
     }
 
     decideSource(dest) {
@@ -57,9 +47,8 @@ class InnocentiaCore {
         return dest
     }
 
+    // FIXME: serve と build 同時にしたら混戦する
     serve() {
-        this._init()
-
         this.builder.on('compiled', ({src, buf}) => {
             if (!this.requests[src]) {
                 this.ev.emit('warning', `missing compiled: ${src}`)
@@ -69,6 +58,7 @@ class InnocentiaCore {
                 this.requests[src].cache = buf
                 this.requests[src].resList.forEach(res => res.type('js').send(buf))
                 this.requests[src].resList = []
+                this.ev.emit('compiled', src)
             }
         })
 
@@ -81,6 +71,7 @@ class InnocentiaCore {
             this.requests[src].cache = buf
             this.requests[src].resList.forEach(res => res.type('js').send(buf))
             this.requests[src].resList = []
+            this.ev.emit('updated', src)
         })
 
         return (req, res, next) => {
@@ -89,22 +80,21 @@ class InnocentiaCore {
                 return next()
             }
 
-            // FIXME
-            const dest = path.resolve(path.join(this.sourcePath, req.url))
-            const src = this.decideSource(dest)
+            const src = this.decideSource(path.resolve(path.join(this.sourcePath, req.url)))
+
+            this.ev.emit('start', src)
 
             if (!this.requests[src]) {
                 this.requests[src] = {
-                    dest,
                     resList: [res],
                     cache: null,
                 }
-                this.builder.watch(src)
+                this.builder.watch([{src}])
                 return
             }
 
             if (this.requests[src].cache) {
-                this.ev.emit('cached', dest)
+                this.ev.emit('cached', src)
                 res.type('js').send(this.requests[src].cache)
                 return
             }

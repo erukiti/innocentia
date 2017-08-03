@@ -1,53 +1,23 @@
 #! /usr/bin/env node
 
-const path = require('path')
-const express = require('express')
-const {EventEmitter} = require('events')
-
 const InnocentiaCore = require('../src')
 
-const app = express()
-const sourcePath = path.resolve(process.argv.length <= 2 ? './' : process.argv[2])
-const core = new InnocentiaCore({sourcePath})
-
-core.on('error', err => console.error('ev2 error: ', err))
-core.on('compiled', filename => console.log('ev2 compiled: ', filename))
-core.on('updated', filename => console.log('ev2 updated: ', filename))
-core.on('start', filename => console.log('ev2 start: ', filename))
-core.on('accessed', filename => console.log(filename))
-core.on('warning', msg => console.warn(msg))
-
-app.use(core.serve())
-app.use(express.static(sourcePath))
-
-app.listen(3000, () => {
-    console.log('http://localhost:3000/')
-})
-
-/*
-    process.stdout.write(`${req.url} `)
-
-    let count = 0
-    const circle = '-\\|/'
-    const timer = setInterval(() => {
-        process.stderr.write(`${circle[count++]}\b`)
-        if (count >= 4) {
-            count = 0
+if (process.argv.length > 2) {
+    switch (process.argv[2]) {
+        case 'serve': {
+            require('../src/cli/serve')
+            return
         }
-    }, 100)
+        case 'build': {
+            require('../src/cli/build')
+            return
+        }
+        case 'node': {
+            require('../src/cli/node')
+            return
+        }
+    }
+}
 
-    const filePath = path.join(sourcePath, req.url)
-    const time = Date.now()
-    const ev = compileJS(filePath, ev)
-    ev.on('compiled', )
-    .then(buf => {
-        console.log(`${(Date.now() - time) / 1000}s`)
-        clearInterval(timer)
-        res.type('js').send(buf)
-    }).catch(err => {
-        console.log(`${(Date.now() - time) / 1000}s`)
-        clearInterval(timer)
-        console.error(err)
-        res.send(`console.log(${JSON.stringify(err, null, '  ')})`)
-    })
-*/
+console.error('unknown opts', process.argv.slice(2))
+

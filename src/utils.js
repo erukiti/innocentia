@@ -1,6 +1,6 @@
 const path = require('path')
 const fs = require('fs')
-const {getLogger} = require('logger')
+const {getLogger} = require('lignum')
 const logger = getLogger('innocentia')
 
 const getPluginPath = (pluginName, basepath = './') => {
