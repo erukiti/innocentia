@@ -1,4 +1,4 @@
-const InnocentiaCore = require('../')
+const {InnocentiaBuild} = require('../')
 const path = require('path')
 
 if (process.argv.length < 5) {
@@ -9,7 +9,7 @@ if (process.argv.length < 5) {
 const src = path.resolve(process.argv[3])
 const dest = path.resolve(process.argv[4])
 
-const core = new InnocentiaCore()
+const core = new InnocentiaBuild()
 
 core.on('error', err => console.error('ev2 error: ', err))
 core.on('compiled', filename => console.log('ev2 compiled: ', filename))

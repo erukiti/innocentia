@@ -10,25 +10,32 @@ class WebpackBuilder {
         return utils.checkLocalModule('webpack')
     }
 
-    constructor(opts = {}) {
+    constructor(config) {
         this.ev = new EventEmitter()
-        this.opts = opts
-        this.src = path.resolve(opts.src || './src')
-        this.dest = path.resolve(opts.dest || './dist')
+        this.sourcePath = path.resolve(config.sourcePath)
+        this.destPath = path.resolve(config.destPath)
+        this.env = config.env
 
         this.webpack = utils.requireLocal('webpack')
 
-        this.rules = []
-        if (utils.checkLocalModule('babel-loader')) {
-            this.rules.push({
-                test: /\.jsx?$/,
-                use: [{
-                    loader: 'babel-loader',
-                    options: {
-                        sourceMap: true
-                    }
-                }]
+        if (config.webpack) {
+            this.rules = config.webpack.rules.map(rule => {
+                rule.test = new RegExp(rule.test)
+                return rule
             })
+        } else {
+            this.rules = []
+            if (utils.checkLocalModule('babel-loader')) {
+                this.rules.push({
+                    test: /\.jsx?$/,
+                    use: [{
+                        loader: 'babel-loader',
+                        options: {
+                            sourceMap: true
+                        }
+                    }]
+                })
+            }
         }
     }
 
@@ -74,7 +81,7 @@ class WebpackBuilder {
             target,
             plugins: [
                 new this.webpack.DefinePlugin({
-                    'process.env.NODE_ENV': JSON.stringify(this.opts.env)
+                    'process.env.NODE_ENV': JSON.stringify(this.env)
                 })
             ],
             stats: {
@@ -91,7 +98,7 @@ class WebpackBuilder {
             return
         }
 
-        // see. https://webpack.js.org/api/node/#error-handling
+        // see. https://webpack.js.org/api/node/#stats-tostring-options-
         const webpackCompileInfo = stats.toString({colors: true})
         if (webpackCompileInfo) {
             this.ev.emit('info', webpackCompileInfo)
@@ -101,8 +108,8 @@ class WebpackBuilder {
             return
         }
 
-        entries.forEach(entry => {
-            this.ev.emit('compiled', entry.src)
+        entries.forEach(({src, dest}) => {
+            this.ev.emit('compiled', {src, dest})
         })
     }
 }

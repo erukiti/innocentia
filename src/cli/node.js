@@ -1,7 +1,7 @@
 const childProcess = require('child_process')
 const path = require('path')
 
-const InnocentiaCore = require('../')
+const {InnocentiaBuild} = require('../')
 
 if (process.argv.length < 4) {
     console.error('innocentia run <src> [buildTemp]')
@@ -11,7 +11,7 @@ if (process.argv.length < 4) {
 const src = path.resolve(process.argv[3])
 const dest = path.resolve(4 in process.argv ? path.join(process.argv[4], 'index.js') : './build/index.js')
 
-const core = new InnocentiaCore()
+const core = new InnocentiaBuild()
 
 const run = filename => {
     const child = childProcess.exec(`node ${dest}`)

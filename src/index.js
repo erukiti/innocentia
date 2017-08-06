@@ -1,2 +1,4 @@
-const InnocentiaCore = require('./innocentia-core')
-module.exports = InnocentiaCore
+module.exports = {
+    InnocentiaExpress: require('./innocentia-express'),
+    InnocentiaBuild: require('./innocentia-build')
+}
