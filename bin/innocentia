@@ -1,27 +1,3 @@
 #! /usr/bin/env node
 
-const InnocentiaCore = require('../src')
-
-if (process.argv.length > 2) {
-    switch (process.argv[2]) {
-        case 'serve': {
-            require('../src/cli/serve')
-            return
-        }
-        case 'build': {
-            require('../src/cli/build')
-            return
-        }
-        case 'node': {
-            require('../src/cli/node')
-            return
-        }
-        case 'electron': {
-            require('../src/cli/electron')
-            return
-        }
-    }
-}
-
-console.error('unknown opts', process.argv.slice(2))
-
+require('../src/cli')

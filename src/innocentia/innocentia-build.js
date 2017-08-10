@@ -10,7 +10,7 @@ class InnocentiaBuild extends InnocentiaCore {
 
     build(entries = []) {
         this.builder
-        .on('compiled', ({src}) => this.ev.emit('compiled', src))
+        .on('compiled', ({src, dest, buf}) => this.ev.emit('compiled', {src, dest, buf}))
         .on('info', info => this.ev.emit('info', info))
         .on('all_compiled', () => this.ev.emit('all_compiled'))
 
@@ -20,7 +20,7 @@ class InnocentiaBuild extends InnocentiaCore {
     }
     watch(entries = []) {
         this.builder
-        .on('compiled', ({src}) => this.ev.emit('compiled', src))
+        .on('compiled', ({src, dest, buf}) => this.ev.emit('compiled', {src, dest, buf}))
         .on('info', info => this.ev.emit('info', info))
         .on('all_compiled', () => this.ev.emit('all_compiled'))
         this.builder.build(this._completeEntries(entries), true)

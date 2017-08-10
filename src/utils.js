@@ -1,7 +1,7 @@
 const path = require('path')
 const fs = require('fs')
 const {getLogger} = require('lignum')
-const logger = getLogger('innocentia')
+const logger = getLogger()
 
 const getPluginPath = (pluginName, basepath = './') => {
     return path.resolve(path.join(basepath, 'node_modules', pluginName))

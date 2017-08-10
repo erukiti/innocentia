@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 const utils = require('../utils')
 const {getLogger} = require('lignum')
-const logger = getLogger('innocentia')
+const logger = getLogger()
 
 class WebpackBuilder {
     static isInstalled() {
@@ -11,7 +11,7 @@ class WebpackBuilder {
     }
 
     static getTypes() {
-        return ['web', 'electron-browser', 'electron-renderer']
+        return ['node', 'web', 'electron-browser', 'electron-renderer']
     }
 
     constructor(config) {
@@ -49,14 +49,16 @@ class WebpackBuilder {
 
     build(entries) {
         try {
+            logger.verbose('webpack build start')
             const compiler = this._getCompiler(entries)
             compiler.run((err, stats) => this._compiled(err, stats, entries))
         } catch (e) {
-            console.error(e)
+            logger.error(e)
         }
     }
 
     watch(entries) {
+        logger.verbose('webpack watch start')
         const compiler = this._getCompiler(entries)
         compiler.watch({}, (err, stats) => this._compiled(err, stats, entries))
     }

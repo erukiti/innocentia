@@ -1,7 +1,7 @@
 const fs = require('fs')
 const path = require('path')
 const {app} = require('electron')
-const logger = require('logger').getLogger('innocentia-electron')
+const logger = require('logger').getLogger()
 
 let destPath = null
 const renderers = []

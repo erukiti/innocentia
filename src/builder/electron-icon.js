@@ -6,13 +6,11 @@ const path = require('path')
 const utils = require('../utils')
 const {EventEmitter} = require('events')
 const {getLogger} = require('lignum')
-const logger = getLogger('innocentia')
-const icongen = utils.requireLocal('icon-gen')
-const Jimp = utils.requireLocal('jimp')
+const logger = getLogger()
 
 class ElectronIconBuilder {
     static isInstalled() {
-        return utils.checkLocalModule('icon-get') && utils.checkLocalModule('jimp')
+        return utils.checkLocalModule('icon-gen') && utils.checkLocalModule('jimp')
     }
 
     static getTypes() {
@@ -29,6 +27,9 @@ class ElectronIconBuilder {
     }
 
     _generateIcon(entry, callback) {
+        const icongen = utils.requireLocal('icon-gen')
+        const Jimp = utils.requireLocal('jimp')
+
         const temp = fs.mkdtempSync('/tmp/ws-')
         Jimp.read(entry.src).then(image => {
             Promise.all([16, 24, 32, 48, 64, 128, 256, 512, 1024].map(size => {

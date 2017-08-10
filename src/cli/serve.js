@@ -3,7 +3,7 @@ const path = require('path')
 const express = require('express')
 const {getLogger} = require('lignum')
 
-const logger = getLogger('innocentia')
+const logger = getLogger()
 const app = express()
 const sourcePath = path.resolve(process.argv.length <= 3 ? './' : process.argv[3])
 const core = new InnocentiaExpress({sourcePath})

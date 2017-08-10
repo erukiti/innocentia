@@ -1,5 +1,5 @@
 {
-  "main": "src/index.js",
+  "main": "src/innocentia/index.js",
   "name": "innocentia",
   "version": "0.0.1",
   "description": "",
@@ -33,6 +33,7 @@
   "dependencies": {
     "express": "^4.15.3",
     "lignum": "file:///Users/erukiti/work/lignum",
-    "mkdirp": "^0.5.1"
+    "mkdirp": "^0.5.1",
+    "yargs": "^8.0.2"
   }
 }

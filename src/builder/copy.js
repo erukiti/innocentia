@@ -3,7 +3,7 @@ const {EventEmitter} = require('events')
 const path = require('path')
 const fs = require('fs')
 const {getLogger} = require('lignum')
-const logger = getLogger('innocentia')
+const logger = getLogger()
 
 class CopyBuilder {
     static isInstalled() {

@@ -1,15 +1,14 @@
 const {EventEmitter} = require('events')
 const {getLogger} = require('lignum')
-const logger = getLogger('innocentia')
+const logger = getLogger()
 
-const Config = require('./config')
-const Builder = require('./builder')
+const Builder = require('../builder')
 
 class InnocentiaCore {
-    constructor(opts = {}) {
+    constructor(conf) {
         this.requests = {}
         this.ev = new EventEmitter()
-        this.config = new Config(opts)
+        this.config = conf
 
         this.builder = new Builder(this.config)
         this.builder.on('error', err => {

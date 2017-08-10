@@ -2,29 +2,48 @@ const {EventEmitter} = require('events')
 const path = require('path')
 const {getLogger} = require('lignum')
 
-const logger = getLogger('innocentia')
+const logger = getLogger()
 
+const utils = require('../utils')
 const BrowserifyBuilder = require('./browserify')
 const WebpackBuilder = require('./webpack')
 const CopyBuilder = require('./copy')
-const ElectronIconBuilder = require('./electron-icon')
 
 class Builder {
     constructor(opts = {}) {
-        // this.builder = new BrowserifyBuilder(opts)
-        this.builder = new WebpackBuilder(opts)
-        this.copyBuilder = new CopyBuilder(opts)
-        this.electronIconBuilder = new ElectronIconBuilder(opts)
-        this.ev = new EventEmitter()
-        this.builders = {
-            copy: this.copyBuilder,
-            'electron-icon': this.electronIconBuilder,
-            'electron-renderer': this.builder,
-            'web': this.builder,
-        }
-
         this.sourcePath = opts.sourcePath
         this.destPath = opts.destPath
+        this.ev = new EventEmitter()
+        this.builders = []
+        this.buildersFromTarget = {}
+
+        this._registerBuilder(CopyBuilder, opts)
+        if (utils.checkLocalModule('icon-gen')) {
+            const ElectronIconBuilder = require('./electron-icon')
+            this._registerBuilder(ElectronIconBuilder, opts)
+        }
+        if (utils.checkLocalModule('webpack')) {
+            this._registerBuilder(WebpackBuilder, opts)
+        }
+
+    }
+
+    _registerBuilder(Klass, opts) {
+        if (!Klass.isInstalled()) {
+            logger.warn(`${Klass.name} is not installed`)
+            return
+        }
+        const builder = new Klass(opts)
+        if (!this.builders.includes(builder)) {
+            this.builders.push(builder)
+        }
+        Klass.getTypes().forEach(target => {
+            if (this.buildersFromTarget[target]) {
+                logger.error(`conflict builder: ${target}`)
+                return
+            }
+            this.buildersFromTarget[target] = builder
+        })
     }
 
     on(name, callback) {
@@ -35,9 +54,7 @@ class Builder {
                 return this
             }
             default: {
-                this.builder.on(name, callback)
-                this.copyBuilder.on(name, callback)
-                this.electronIconBuilder.on(name, callback)
+                this.builders.forEach(builder => builder.on(name, callback))
                 return this
             }
         }
@@ -51,6 +68,9 @@ class Builder {
                 dest = path.resolve(entry.dest)
             } else if (this.destPath) {
                 dest = src.replace(this.sourcePath, this.destPath)
+                if (/\.[tj]sx?$/.test(dest)) {
+                    dest = dest.replace(/\.[a-z]+$/, '.js')
+                }
             }
             return {src, dest, type: entry.type}
         })
@@ -61,7 +81,7 @@ class Builder {
         let isAllCompiled = false
 
         this._completeEntries(entries).forEach(entry => {
-            if (!this.builders[entry.type]) {
+            if (!this.buildersFromTarget[entry.type]) {
                 logger.log(`not found ${entry.type}`)
                 return
             }
@@ -77,7 +97,7 @@ class Builder {
         })
 
         Object.keys(perBuilders).forEach(key => {
-            const builder = this.builders[key]
+            const builder = this.buildersFromTarget[key]
             builder.on('compiled', ({index, buf}) => {
                 perBuilders[key].isCompiled[index] = true
                 const {src, dest} = perBuilders[key].entries[index]
@@ -106,7 +126,8 @@ class Builder {
     }
 
     run(src) {
-        this.builder.run(src)
+        console.log('errrorororororor!')
+        process.exit(-1)
     }
 }
 
