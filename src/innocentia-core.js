@@ -19,6 +19,7 @@ class InnocentiaCore {
 
     on(name, handler) {
         this.ev.on(name, handler)
+        return this
     }
 }
 

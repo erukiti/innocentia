@@ -16,6 +16,10 @@ if (process.argv.length > 2) {
             require('../src/cli/node')
             return
         }
+        case 'electron': {
+            require('../src/cli/electron')
+            return
+        }
     }
 }
 

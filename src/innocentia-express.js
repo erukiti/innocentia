@@ -84,7 +84,7 @@ class InnocentiaExpress extends InnocentiaCore {
                     resList: [res],
                     cache: null,
                 }
-                this.builder.watch([{src, dest, target: 'web'}])
+                this.builder.build([{src, dest, target: 'web'}], true)
                 return
             }
 

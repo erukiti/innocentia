@@ -9,6 +9,10 @@ class BrowserifyBuild {
         return utils.checkLocalModule('browserify')
     }
 
+    static getTypes() {
+        return ['web', 'electron-browser', 'electron-renderer']
+    }
+
     constructor(opts = {}) {
         this.ev = new EventEmitter()
         this.opts = opts

@@ -10,6 +10,10 @@ class WebpackBuilder {
         return utils.checkLocalModule('webpack')
     }
 
+    static getTypes() {
+        return ['web', 'electron-browser', 'electron-renderer']
+    }
+
     constructor(config) {
         this.ev = new EventEmitter()
         this.sourcePath = path.resolve(config.sourcePath)
@@ -59,7 +63,7 @@ class WebpackBuilder {
 
     _getCompiler(entries) {
         const conf = entries.map(entry => {
-            logger.info('webpack', JSON.stringify(entry))
+            logger.log(JSON.stringify(entry))
             return this._createConfig(entry)
         })
 
@@ -108,8 +112,8 @@ class WebpackBuilder {
             return
         }
 
-        entries.forEach(({src, dest}) => {
-            this.ev.emit('compiled', {src, dest})
+        entries.forEach(({src, dest}, index) => {
+            this.ev.emit('compiled', {src, dest, index})
         })
     }
 }
