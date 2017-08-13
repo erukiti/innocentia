@@ -6,7 +6,7 @@ const {InnocentiaBuild} = require('../../innocentia')
 const logger = getLogger()
 
 const run = filename => {
-    logger.info(`run ${path.relative('.', filename)}`)
+    logger.verbose(`run ${path.relative('.', filename)}`)
     const child = childProcess.exec(`node ${filename}`)
     child.stdout.pipe(process.stdout)
     child.stderr.pipe(process.stderr)
@@ -17,7 +17,7 @@ const run = filename => {
     })
 
     child.on('exit', (code, signal) => {
-        logger.info(`exit: ${code}`)
+        logger.verbose(`exit: ${code}`)
         process.exit(code)
     })
 }

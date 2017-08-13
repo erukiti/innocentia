@@ -19,4 +19,3 @@ core.on('accessed', filename => console.log(filename))
 core.on('warning', msg => console.warn(msg))
 
 core.build(src, dest)
-
