@@ -30,6 +30,7 @@ class InnocentiaConfig {
         this.webpack = opts.webpack || config['webpack']
         this.env = opts.env || 'development'
         this.target = config['target']
+        this.testers = config['testers']
 
         if (opts.isTemporaryDestination || !this.destPath) {
             this.destPath = fs.mkdtempSync(path.join(os.tmpdir(), 'innocentia-'))
