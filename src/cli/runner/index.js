@@ -1,3 +1,4 @@
+const logger = require('lignum').getLogger()
 
 const run = (type, conf) => {
     switch (type) {
@@ -11,8 +12,13 @@ const run = (type, conf) => {
             runNode(conf)
             break
         }
+        case 'browser': {
+            const runBrowser = require('./browser')
+            runBrowser(conf)
+            break
+        }
         default: {
-            console.error('unknown types')
+            logger.error('unknown types')
         }
     }
 }

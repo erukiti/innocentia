@@ -16,11 +16,14 @@ class Builder {
         this.ev = new EventEmitter()
         this.builders = []
         this.buildersFromTarget = {}
+        this.finalizer = null
 
         this._registerBuilder(CopyBuilder, opts)
         if (utils.checkLocalModule('icon-gen')) {
             const ElectronIconBuilder = require('./electron-icon')
             this._registerBuilder(ElectronIconBuilder, opts)
+            const ElectronPackagePostBuild = require('./post-build/electron-package')
+            this.finalizer = new ElectronPackagePostBuild(opts)
         }
         if (utils.checkLocalModule('webpack')) {
             this._registerBuilder(WebpackBuilder, opts)
@@ -45,6 +48,7 @@ class Builder {
             this.buildersFromTarget[target] = builder
         })
     }
+
 
     on(name, callback) {
         switch (name) {
@@ -114,6 +118,9 @@ class Builder {
                 if (nComplete === Object.keys(perBuilders).length) {
                     this.ev.emit('all_compiled')
                     isAllCompiled = true
+                    if (this.finalizer) {
+                        this.finalizer.finalize()
+                    }
                 }
             })
             if (isWatch) {

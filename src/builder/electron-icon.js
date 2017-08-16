@@ -61,7 +61,7 @@ class ElectronIconBuilder {
         })
     }
 
-    run(entries) {
+    build(entries) {
         this._run(entries)
     }
 

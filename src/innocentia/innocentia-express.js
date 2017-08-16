@@ -75,7 +75,7 @@ class InnocentiaExpress extends InnocentiaCore {
                 return next()
             }
 
-            const src = this._decideSource(path.resolve(path.join(this.config.basePath, req.url)))
+            const src = this._decideSource(path.resolve(path.join(this.config.sourcePath, req.url)))
             const dest = path.join(temp, req.url)
             this.ev.emit('start', src)
 
@@ -84,7 +84,7 @@ class InnocentiaExpress extends InnocentiaCore {
                     resList: [res],
                     cache: null,
                 }
-                this.builder.build([{src, dest, target: 'web'}], true)
+                this.builder.build([{src, dest, type: 'web'}], true)
                 return
             }
 

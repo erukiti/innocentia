@@ -31,6 +31,22 @@ class Utils {
         return fs.readdirSync(dirpath).filter(s => re.test(s))
     }
 
+    static readNpmVersion(name) {
+        let output = ''
+        try {
+            output = childProcess.execSync('npm list --depth=0').toString()
+        } catch (e) {
+            output = e.output.toString()
+        }
+        const ind = output.indexOf(`${name}@`)
+        if (ind !== -1) {
+            return output.substr(ind + name.length + 1).split('\n')[0]
+        } else {
+            return null
+        }
+    }
+
+
     static exec(cmd) {
         return new Promise((resolve, reject) => {
             const child = childProcess.exec(cmd)
