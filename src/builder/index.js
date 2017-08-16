@@ -80,7 +80,7 @@ class Builder {
         })
     }
 
-    build(entries, isWatch = false) {
+    build(entries, isWatch = false, isFinalize = false) {
         const perBuilders = {}
         let isAllCompiled = false
 
@@ -118,7 +118,7 @@ class Builder {
                 if (nComplete === Object.keys(perBuilders).length) {
                     this.ev.emit('all_compiled')
                     isAllCompiled = true
-                    if (this.finalizer) {
+                    if (isFinalize && this.finalizer) {
                         this.finalizer.finalize()
                     }
                 }

@@ -13,7 +13,7 @@ const builder = (conf) => {
     })
     core.on('updated', filename => logger.verbse('unknown updated: ', filename))
 
-    core.build()
+    core.build([], true)
 }
 
 module.exports = builder

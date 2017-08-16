@@ -18,7 +18,6 @@ class ElectornPackagePostBuild {
         const packager = utils.requireLocal('electron-packager')
         const createInstaller = utils.requireLocal('electron-installer-dmg')
         const electronVersion = utils.readNpmVersion('electron')
-        console.log(electronVersion)
         const name = packageInfo.name
         const packagerConf = {
             dir: this.config.destPath,

@@ -8,13 +8,13 @@ class InnocentiaBuild extends InnocentiaCore {
         return this.config.entries
     }
 
-    build(entries = []) {
+    build(entries = [], isFinalize = false) {
         this.builder
         .on('compiled', ({src, dest, buf}) => this.ev.emit('compiled', {src, dest, buf}))
         .on('info', info => this.ev.emit('info', info))
         .on('all_compiled', () => this.ev.emit('all_compiled'))
 
-        this.builder.build(this._completeEntries(entries), false)
+        this.builder.build(this._completeEntries(entries), false, isFinalize)
 
         return this
     }
