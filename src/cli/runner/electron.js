@@ -38,9 +38,12 @@ const runElectron = config => {
 
     const electron = requireLocal('electron')
 
+    const cwd = process.cwd()
+    const relative = (filename) => path.relative(cwd, filename)
+
     build.on('error', err => logger.error(err))
-    build.on('compiled', filename => logger.info('compiled', filename))
-    build.on('updated', filename => logger.info('updated', filename))
+    build.on('compiled', ({src, dest}) => logger.info(`compiled ${relative(src)} -> ${relative(dest)}`))
+    build.on('updated', ({src, dest}) => logger.info(`updated ${relative(src)} -> ${relative(dest)}`))
     build.on('start', filename => logger.verbose('start', filename))
     build.watch().on('all_compiled', () => {
         logger.info('all compiled.')

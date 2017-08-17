@@ -57,6 +57,7 @@ const cli = () => {
         .command(parseGeneralOptions(require('./run')()))
         .command(parseGeneralOptions(require('./test')()))
         .command(parseGeneralOptions(require('./build')()))
+        .command(parseGeneralOptions(require('./hint')()))
         .demandCommand(1, 'Need subcommand.')
         .argv
 }

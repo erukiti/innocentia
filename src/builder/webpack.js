@@ -69,6 +69,8 @@ class WebpackBuilder {
             return this._createConfig(entry)
         })
 
+        logger.verbose(`webpack configuration\n${JSON.stringify(conf, null, '  ')}`)
+
         return this.webpack(conf)
     }
 
