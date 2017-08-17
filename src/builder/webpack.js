@@ -75,7 +75,7 @@ class WebpackBuilder {
     }
 
     _createConfig({src, dest, target}) {
-        return {
+        const conf = {
             entry: src,
             output: {
                 path: path.dirname(dest),
@@ -85,7 +85,6 @@ class WebpackBuilder {
                 extensions: ['.js', '.jsx', 'ts', 'tsx']
             },
             module: {rules: this.rules},
-            devtool: '#source-map',
             target,
             plugins: [
                 new this.webpack.DefinePlugin({
@@ -98,6 +97,11 @@ class WebpackBuilder {
                 errorDetails: true,
             }
         }
+
+        if (this.env !== 'production') {
+            conf.devtool = '#source-map'
+        }
+        return conf
     }
 
     _compiled(err, stats, entries) {
